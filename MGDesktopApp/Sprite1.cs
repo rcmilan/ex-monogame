@@ -1,14 +1,15 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MGDesktopApp.Interfaces;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 
 namespace MGDesktopApp
 {
-    internal class Sprite1
+    internal class Sprite1 : ISprite
     {
         public Vector2 Position;
         public float Speed;
-        public Texture2D Texture;
+        public Texture2D Texture { get; private set; }
 
         private SpriteEffects _spriteEffects = SpriteEffects.None;
 
@@ -32,7 +33,22 @@ namespace MGDesktopApp
                 0f);
         }
 
-        public void Move(GameTime gameTime, GraphicsDeviceManager graphics)
+        public void SetTexture(Texture2D texture)
+        {
+            Texture = texture;
+        }
+
+        public void Update(GameTime gameTime, GraphicsDeviceManager graphics, bool limitScreen = true)
+        {
+            Move(gameTime, graphics, limitScreen);
+        }
+
+        public void Update(GameTime gameTime, GraphicsDeviceManager graphics)
+        {
+            Update(gameTime, graphics, false);
+        }
+
+        private void Move(GameTime gameTime, GraphicsDeviceManager graphics, bool limitScreen)
         {
             var kstate = Keyboard.GetState();
 
@@ -58,20 +74,18 @@ namespace MGDesktopApp
                 _spriteEffects = SpriteEffects.None;
             }
 
-            LimitMovement(graphics);
-        }
+            if (limitScreen)
+            {
+                if (Position.X > graphics.PreferredBackBufferWidth - Texture.Width / 2)
+                    Position.X = graphics.PreferredBackBufferWidth - Texture.Width / 2;
+                else if (Position.X < Texture.Width / 2)
+                    Position.X = Texture.Width / 2;
 
-        private void LimitMovement(GraphicsDeviceManager graphics)
-        {
-            if (Position.X > graphics.PreferredBackBufferWidth - Texture.Width / 2)
-                Position.X = graphics.PreferredBackBufferWidth - Texture.Width / 2;
-            else if (Position.X < Texture.Width / 2)
-                Position.X = Texture.Width / 2;
-
-            if (Position.Y > graphics.PreferredBackBufferHeight - Texture.Height / 2)
-                Position.Y = graphics.PreferredBackBufferHeight - Texture.Height / 2;
-            else if (Position.Y < Texture.Height / 2)
-                Position.Y = Texture.Height / 2;
+                if (Position.Y > graphics.PreferredBackBufferHeight - Texture.Height / 2)
+                    Position.Y = graphics.PreferredBackBufferHeight - Texture.Height / 2;
+                else if (Position.Y < Texture.Height / 2)
+                    Position.Y = Texture.Height / 2;
+            }
         }
     }
 }
