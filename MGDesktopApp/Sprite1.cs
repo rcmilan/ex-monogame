@@ -10,6 +10,8 @@ namespace MGDesktopApp
         public float Speed;
         public Texture2D Texture;
 
+        private SpriteEffects _spriteEffects = SpriteEffects.None;
+
         public Sprite1(Vector2 position, float speed = 100f)
         {
             this.Position = position;
@@ -26,7 +28,7 @@ namespace MGDesktopApp
                 0f,
                 new Vector2(Texture.Width / 2, Texture.Height / 2),
                 Vector2.One,
-                SpriteEffects.None,
+                _spriteEffects,
                 0f);
         }
 
@@ -36,13 +38,25 @@ namespace MGDesktopApp
 
             // Move
             if (kstate.IsKeyDown(Keys.Up))
+            {
                 Position.Y -= Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _spriteEffects = SpriteEffects.None;
+            }
             if (kstate.IsKeyDown(Keys.Down))
+            {
                 Position.Y += Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _spriteEffects = SpriteEffects.FlipVertically;
+            }
             if (kstate.IsKeyDown(Keys.Left))
+            {
                 Position.X -= Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _spriteEffects = SpriteEffects.FlipHorizontally;
+            }
             if (kstate.IsKeyDown(Keys.Right))
+            {
                 Position.X += Speed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                _spriteEffects = SpriteEffects.None;
+            }
 
             LimitMovement(graphics);
         }
