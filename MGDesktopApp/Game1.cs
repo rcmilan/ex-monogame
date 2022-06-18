@@ -45,11 +45,13 @@ namespace MGDesktopApp
 
             var sprite1 = new Sprite1(myPos, mySpeed);
             var sprite2 = new Sprite1(myPos, mySpeed * 2);
+            var sprite3 = new Sprite1(myPos, mySpeed * 3);
 
             _sprites = new List<Sprite1>
             {
                 sprite1,
-                sprite2
+                sprite2,
+                sprite3
             };
 
             base.Initialize();
