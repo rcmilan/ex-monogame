@@ -1,6 +1,5 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
 
 namespace MGDesktopApp
 {
@@ -10,14 +9,12 @@ namespace MGDesktopApp
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private Vector2 myPos;
-        private float mySpeed;
-        private Texture2D myTexture;
+        private List<Sprite1> _sprites;
 
         public Game1() : base()
         {
-            _graphics = new GraphicsDeviceManager(this);
             Content.RootDirectory = "Content";
+            _graphics = new GraphicsDeviceManager(this);
             IsFixedTimeStep = true;
             IsMouseVisible = true;
         }
@@ -31,16 +28,10 @@ namespace MGDesktopApp
             // Draw
             _spriteBatch.DrawString(_font, "Hello World", new Vector2(0, 0), Color.Black);
 
-            _spriteBatch.Draw(
-                myTexture,
-                myPos,
-                null,
-                Color.White,
-                0f,
-                new Vector2(myTexture.Width / 2, myTexture.Height / 2),
-                Vector2.One,
-                SpriteEffects.None,
-                0f);
+            foreach (var sprite in _sprites)
+            {
+                sprite.Draw(_spriteBatch);
+            }
 
             _spriteBatch.End();
 
@@ -49,8 +40,19 @@ namespace MGDesktopApp
 
         protected override void Initialize()
         {
-            myPos = new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
-            mySpeed = 100f;
+            var myPos = new Vector2(_graphics.PreferredBackBufferWidth / 2, _graphics.PreferredBackBufferHeight / 2);
+            var mySpeed = 100f;
+
+            var sprite1 = new Sprite1(myPos, mySpeed);
+            var sprite2 = new Sprite1(myPos, mySpeed * 2);
+            var sprite3 = new Sprite1(myPos, mySpeed * 3);
+
+            _sprites = new List<Sprite1>
+            {
+                sprite1,
+                sprite2,
+                sprite3
+            };
 
             base.Initialize();
         }
@@ -60,7 +62,11 @@ namespace MGDesktopApp
             _spriteBatch = new SpriteBatch(GraphicsDevice);
 
             _font = Content.Load<SpriteFont>("Consolas16");
-            myTexture = Content.Load<Texture2D>("sprite1");
+
+            foreach (var sprite in _sprites)
+            {
+                sprite.Texture = Content.Load<Texture2D>("sprite1");
+            }
 
             base.LoadContent();
         }
@@ -72,29 +78,10 @@ namespace MGDesktopApp
 
         protected override void Update(GameTime gameTime)
         {
-            var kstate = Keyboard.GetState();
-
-            if (kstate.IsKeyDown(Keys.Up))
-                myPos.Y -= mySpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (kstate.IsKeyDown(Keys.Down))
-                myPos.Y += mySpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (kstate.IsKeyDown(Keys.Left))
-                myPos.X -= mySpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (kstate.IsKeyDown(Keys.Right))
-                myPos.X += mySpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
-
-            if (myPos.X > _graphics.PreferredBackBufferWidth - myTexture.Width / 2)
-                myPos.X = _graphics.PreferredBackBufferWidth - myTexture.Width / 2;
-            else if (myPos.X < myTexture.Width / 2)
-                myPos.X = myTexture.Width / 2;
-
-            if (myPos.Y > _graphics.PreferredBackBufferHeight - myTexture.Height / 2)
-                myPos.Y = _graphics.PreferredBackBufferHeight - myTexture.Height / 2;
-            else if (myPos.Y < myTexture.Height / 2)
-                myPos.Y = myTexture.Height / 2;
+            foreach (var sprite in _sprites)
+            {
+                sprite.Move(gameTime, _graphics);
+            }
 
             base.Update(gameTime);
         }
