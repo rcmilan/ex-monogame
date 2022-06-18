@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using MGDesktopApp.Interfaces;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 
 namespace MGDesktopApp
@@ -9,7 +10,7 @@ namespace MGDesktopApp
         private GraphicsDeviceManager _graphics;
         private SpriteBatch _spriteBatch;
 
-        private List<Sprite1> _sprites;
+        private List<ISprite> _sprites;
 
         public Game1() : base()
         {
@@ -44,14 +45,10 @@ namespace MGDesktopApp
             var mySpeed = 100f;
 
             var sprite1 = new Sprite1(myPos, mySpeed);
-            var sprite2 = new Sprite1(myPos, mySpeed * 2);
-            var sprite3 = new Sprite1(myPos, mySpeed * 3);
 
-            _sprites = new List<Sprite1>
+            _sprites = new List<ISprite>
             {
-                sprite1,
-                sprite2,
-                sprite3
+                sprite1
             };
 
             base.Initialize();
@@ -65,7 +62,7 @@ namespace MGDesktopApp
 
             foreach (var sprite in _sprites)
             {
-                sprite.Texture = Content.Load<Texture2D>("sprite1");
+                sprite.SetTexture(Content.Load<Texture2D>("charaset"));
             }
 
             base.LoadContent();
@@ -80,7 +77,7 @@ namespace MGDesktopApp
         {
             foreach (var sprite in _sprites)
             {
-                sprite.Move(gameTime, _graphics);
+                sprite.Update(gameTime, _graphics);
             }
 
             base.Update(gameTime);
